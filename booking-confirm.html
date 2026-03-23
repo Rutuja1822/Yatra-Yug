@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Booking Confirmed — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.conf-hero {
+  background: linear-gradient(135deg, var(--sage) 0%, #0a2e1e 50%, var(--ink2) 100%);
+  padding: 68px 5% 52px; text-align: center; position: relative; overflow: hidden;
+}
+.conf-hero::before { content:''; position:absolute; width:500px; height:500px; background:radial-gradient(circle,rgba(61,107,86,.3),transparent 65%); top:-150px; right:-80px; border-radius:50%; }
+@keyframes confetti { 0%{transform:translateY(-10px) rotate(0deg)} 100%{transform:translateY(110vh) rotate(720deg)} }
+.confetti-piece { position:absolute; width:8px; height:8px; top:-10px; animation:confetti 3s ease-in forwards; border-radius:2px; }
+.tick-circle {
+  width:84px; height:84px; border-radius:50%;
+  background:rgba(255,255,255,.15); border:2px solid rgba(255,255,255,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.6rem; margin:0 auto 24px;
+  animation:scaleIn .6s var(--ease) both;
+}
+.conf-bk-id { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:50px; padding:6px 20px; color:#fff; font-weight:700; font-size:.85rem; display:inline-block; margin-top:14px; font-family:var(--font-mono); letter-spacing:.08em; }
+.conf-content { display:grid; grid-template-columns:1fr 1fr; gap:28px; padding:48px 5%; max-width:1100px; margin:0 auto; }
+.cc { background:var(--white); border-radius:22px; padding:28px; box-shadow:0 4px 20px rgba(14,12,10,.07); border:1px solid var(--cream2); margin-bottom:24px; }
+.cc h3 { font-family:var(--font-display); font-size:1.15rem; color:var(--ink2); margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--cream2); display:flex; align-items:center; gap:8px; }
+.ir { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--cream2); font-size:.88rem; }
+.ir:last-child{border-bottom:none}
+.ir .il{color:var(--muted)}.ir .iv{font-weight:700;color:var(--ink2)}
+.dest-banner { display:flex; align-items:center; gap:14px; padding:16px; border-radius:14px; margin-bottom:20px; }
+.budget-viz { margin-bottom:12px; }
+.bv-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; font-size:.85rem; }
+.bv-label { width:130px; color:var(--muted); flex-shrink:0; }
+.bv-bar { flex:1; height:8px; background:var(--cream2); border-radius:4px; overflow:hidden; }
+.bv-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--amber),var(--terra2)); transition:width .8s var(--ease); }
+.bv-amount { width:90px; text-align:right; font-weight:700; color:var(--ink2); font-size:.83rem; }
+.total-showcase { background:linear-gradient(135deg,var(--ink2),#16100a); border-radius:16px; padding:22px; text-align:center; margin-top:16px; }
+.ts-lbl { font-size:.78rem; color:rgba(247,242,235,.45); font-family:var(--font-mono); letter-spacing:.06em; margin-bottom:6px; }
+.ts-num { font-family:var(--font-display); font-size:2.2rem; color:var(--gold); font-weight:700; }
+.ts-sub { font-size:.78rem; color:rgba(247,242,235,.35); margin-top:5px; }
+.pl-mini { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--cream2); font-size:.86rem; }
+.pl-mini:last-child{border-bottom:none}
+.pm-ic{font-size:1.15rem;width:26px;text-align:center}
+.pm-n{font-weight:700;color:var(--ink2)}.pm-t{font-size:.75rem;color:var(--muted)}
+.conf-actions { display:flex; gap:12px; justify-content:center; margin-top:8px; flex-wrap:wrap; }
+@media(max-width:780px){.conf-content{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<nav class="navbar scrolled">
+  <a href="index.html" class="nav-brand"><div class="nav-logo-wrap">🚌</div><span class="nav-brand-name">Yatra</em> Yug</span></a>
+  <div class="nav-links"><div id="navUser"></div></div>
+</nav>
+<main>
+<div class="conf-hero" id="confHero">
+  <div id="confettiWrap"></div>
+  <div class="tick-circle">✅</div>
+  <h1 id="confTitle" style="font-family:var(--font-display);color:var(--white);font-size:2.4rem;margin-bottom:8px;position:relative">Booking Submitted!</h1>
+  <p id="confSub" style="color:rgba(247,242,235,.65);position:relative"></p>
+  <div class="conf-bk-id" id="bkId"></div>
+</div>
+<div class="conf-content" id="confContent"></div>
+</main>
+<footer><p><strong>Yatra Yug</strong> &nbsp;·&nbsp; &copy; 2024 &nbsp;·&nbsp; <a href="index.html">Home</a></p></footer>
+<script src="data.js"></script>
+<script>
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+
+const wrap=document.getElementById('confettiWrap');
+const colors=['#c8861a','#e8a020','#b8441a','#3d6b56','#f0c040','#f7f2eb'];
+for(let i=0;i<30;i++){
+  const p=document.createElement('div');
+  p.className='confetti-piece';
+  p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;transform:rotate(${Math.random()*360}deg)`;
+  wrap.appendChild(p);
+}
+
+const params=new URLSearchParams(location.search);
+const bkId=parseInt(params.get('bk')),uid=parseInt(params.get('uid'));
+const tIcons={Heritage:'🏛️',Adventure:'🧗',Nature:'🌿',Spiritual:'🙏',Beach:'🏖️',Wildlife:'🦁',Wonder:'✨',Culture:'🎭',Shopping:'🛍️',Landmark:'🏙️'};
+
+async function loadBookingConfirmation(){
+  try{
+    const bk=await apiGetBooking(uid,bkId);
+    const d=DESTINATIONS.find(x=>x.id===bk.destId),places=PLACES[bk.destId]||[],b=bk.budget;
+    document.getElementById('confTitle').textContent='Booking Confirmed!';
+    document.getElementById('confSub').textContent=`Your trip to ${bk.destName} is all set!`;
+    document.getElementById('bkId').textContent=`BK-${String(bkId).slice(-6).toUpperCase()}`;
+    document.getElementById('confContent').innerHTML=`
+      <div>
+        <div class="cc">
+          <h3>🗺️ Trip Details</h3>
+          <div class="dest-banner" style="background:${bk.color}15;border:1px solid ${bk.color}28">
+            <span style="font-size:2.4rem">${bk.emoji}</span>
+            <div><div style="font-family:var(--font-display);font-size:1.3rem;color:var(--ink2);font-weight:700">${bk.destName}</div><div style="color:var(--muted);font-size:.82rem">📍 ${bk.state}</div></div>
+          </div>
+          <div class="ir"><span class="il">📅 Travel Date</span><span class="iv">${bk.tDate}</span></div>
+          <div class="ir"><span class="il">↩️ Return Date</span><span class="iv">${bk.rDate}</span></div>
+          <div class="ir"><span class="il">👥 Passengers</span><span class="iv">${bk.pax}</span></div>
+          <div class="ir"><span class="il">🚌 Bus Type</span><span class="iv">${bk.bus}</span></div>
+          <div class="ir"><span class="il">📏 Distance</span><span class="iv">${bk.km} km</span></div>
+          <div class="ir"><span class="il">🌤️ Best Season</span><span class="iv">${bk.season||d?.season||'-'}</span></div>
+          <div class="ir"><span class="il">📋 Status</span><span class="iv" style="color:var(--sage2)">✅ ${bk.status}</span></div>
+        </div>
+        <div class="cc">
+          <h3>🎯 Places to Visit</h3>
+          ${places.map(p=>`<div class="pl-mini"><span class="pm-ic">${tIcons[p.type]||'📍'}</span><div><div class="pm-n">${p.name}</div><div class="pm-t">${p.type}</div></div></div>`).join('')}
+        </div>
+        <div class="conf-actions">
+          <a href="dashboard.html" class="btn btn-amber">View My Trips</a>
+          <a href="destinations.html" class="btn btn-dark">Explore More</a>
+        </div>
+      </div>
+      <div>
+        <div class="cc">
+          <h3>💰 Budget Breakdown</h3>
+          ${[['🚌 Bus Fare',b.fuel],['🏨 Accommodation',b.accom],['🍽️ Food',b.food],['🎯 Sightseeing',b.sight],['📦 Miscellaneous',b.misc]].map(([lbl,val])=>`
+            <div class="bv-row">
+              <span class="bv-label">${lbl}</span>
+              <div class="bv-bar"><div class="bv-fill" style="width:${Math.round(val/b.total*100)}%"></div></div>
+              <span class="bv-amount">${fmt(val)}</span>
+            </div>`).join('')}
+          <div class="total-showcase">
+            <div class="ts-lbl">TOTAL ESTIMATED COST</div>
+            <div class="ts-num">${fmt(b.total)}</div>
+            <div class="ts-sub">for ${bk.pax} passenger${bk.pax>1?'s':''} · ${fmt(b.total/bk.pax)} per person</div>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:rgba(61,107,86,.08);border-radius:10px;font-size:.83rem;color:var(--sage2);line-height:1.6;border:1px solid rgba(61,107,86,.15)">
+            💡 <strong>Travel Tip:</strong> Prices are estimates. Book accommodation in advance for best rates. Carry sufficient cash for rural areas.
+          </div>
+        </div>
+      </div>`;
+  }catch(err){
+    if((err.message||'').includes('User not found')){
+      handleInvalidSession('dashboard.html');
+      return;
+    }
+    window.location.href='dashboard.html';
+  }
+}
+loadBookingConfirmation();
+
+const user=getSession();
+const el=document.getElementById('navUser');
+if(user) el.innerHTML=`<div class="nav-user-chip"><div class="nav-avatar">${user.name[0].toUpperCase()}</div></div><a href="#" onclick="logout()" class="nav-logout">Logout</a>`;
+</script>
+</body>
+</html>

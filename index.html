@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Yatra Yug — Journey Beyond the Ordinary</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; position: relative; overflow: hidden;
+  display: flex; align-items: center;
+  background: var(--ink2);
+}
+.hero-bg-canvas {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 120% 80% at 70% 40%, rgba(200,134,26,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse 80% 60% at 10% 80%, rgba(184,68,26,0.1) 0%, transparent 50%),
+              radial-gradient(ellipse 60% 50% at 50% 0%, rgba(61,107,86,0.06) 0%, transparent 50%);
+}
+.hero-grid-lines {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(247,242,235,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247,242,235,1) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 5%; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+}
+.hero-left { max-width: 620px; }
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 28px;
+}
+.hero-eyebrow-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--amber); animation: pulseGlow 2.5s infinite;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6.5vw, 5.2rem);
+  font-weight: 700; line-height: 1.02;
+  color: var(--white); margin-bottom: 24px;
+}
+.hero-title em { font-style: italic; color: var(--amber2); }
+.hero-title .underline-word {
+  position: relative; display: inline-block;
+}
+.hero-title .underline-word::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--amber), var(--terra2));
+  transform: scaleX(0); transform-origin: left;
+  animation: expandLine 1.2s 1s var(--ease) forwards;
+}
+@keyframes expandLine { to { transform: scaleX(1); } }
+.hero-desc {
+  color: rgba(247,242,235,0.62); font-size: 1.05rem; line-height: 1.75;
+  max-width: 480px; margin-bottom: 40px;
+}
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 52px; }
+.hero-stats {
+  display: flex; gap: 40px; padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.hs-num {
+  font-family: var(--font-display); font-size: 2.4rem;
+  font-weight: 700; color: var(--white); line-height: 1;
+}
+.hs-num span { color: var(--amber); }
+.hs-lbl { font-size: 0.78rem; color: rgba(247,242,235,0.45); margin-top: 4px; letter-spacing: 0.04em; font-family: var(--font-mono); }
+
+/* Hero right — floating destination cards */
+.hero-right { position: relative; height: 560px; }
+.float-card {
+  position: absolute; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: float 6s ease-in-out infinite;
+  cursor: pointer; transition: transform 0.3s var(--ease);
+}
+.float-card:hover { transform: scale(1.04) !important; }
+.fc1 {
+  width: 200px; left: 0; top: 40px; animation-delay: 0s;
+  background: #1a3a5c;
+}
+.fc2 {
+  width: 230px; right: 0; top: 0; animation-delay: -2s;
+  background: #3a1c71;
+}
+.fc3 {
+  width: 210px; left: 40px; bottom: 40px; animation-delay: -4s;
+  background: #1a4a3a;
+}
+.fc4 {
+  width: 180px; right: 20px; bottom: 80px; animation-delay: -1s;
+  background: #5c3a00;
+}
+.float-card-inner {
+  padding: 16px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.65) 0%, transparent 55%);
+}
+.float-card-cover {
+  height: 120px; display: flex; align-items: center; justify-content: center;
+  font-size: 3.2rem; position: relative;
+}
+.float-card-info { padding: 14px 12px 12px; }
+.float-card-name {
+  font-family: var(--font-display); font-size: 1.05rem;
+  font-weight: 700; color: var(--white); margin-bottom: 4px;
+}
+.float-card-meta { font-size: 0.75rem; color: rgba(255,255,255,0.55); }
+.float-card-rating {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: rgba(200,134,26,0.2); border: 1px solid rgba(200,134,26,0.35);
+  color: var(--gold); padding: 2px 8px; border-radius: 50px;
+  font-size: 0.72rem; margin-top: 6px;
+}
+
+/* ── SCROLL SEARCH ── */
+.search-section {
+  background: var(--cream); padding: 0 5%;
+  margin-top: -1px;
+}
+.search-bar-mega {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 8px 8px 8px 24px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 48px rgba(14,12,10,0.12), 0 2px 8px rgba(14,12,10,0.06);
+  transform: translateY(-32px);
+  border: 1px solid var(--cream2);
+}
+.sbm-input {
+  flex: 1; border: none; outline: none;
+  font-family: var(--font-body); font-size: 1rem;
+  color: var(--ink); background: transparent;
+  padding: 8px 0;
+}
+.sbm-input::placeholder { color: var(--stone); }
+.sbm-divider { width: 1px; height: 32px; background: var(--cream2); }
+.sbm-btn {
+  background: linear-gradient(135deg, var(--amber), var(--terra2));
+  color: var(--white); border: none; border-radius: 14px;
+  padding: 14px 28px; font-family: var(--font-body);
+  font-size: 0.93rem; font-weight: 700; cursor: pointer;
+  transition: all 0.25s var(--ease); white-space: nowrap;
+}
+.sbm-btn:hover { transform: scale(1.03); box-shadow: 0 8px 24px rgba(200,134,26,0.4); }
+
+/* ── FEATURED GRID ── */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1100px) { .featured-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .featured-grid { grid-template-columns: 1fr; } }
+
+/* ── CATEGORY STRIP ── */
+.cat-strip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 48px; }
+.cat-strip::-webkit-scrollbar { display: none; }
+.cat-btn {
+  flex-shrink: 0; padding: 10px 22px; border-radius: 50px;
+  border: 1.5px solid var(--cream2); background: var(--white);
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; color: var(--muted);
+}
+.cat-btn:hover, .cat-btn.active {
+  border-color: var(--amber); background: var(--amber); color: var(--ink);
+}
+
+/* ── EDITORIAL STRIP ── */
+.editorial {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  background: var(--ink2); overflow: hidden; border-radius: 24px;
+  margin: 0 0 32px;
+}
+.editorial-left { padding: 56px 52px; display: flex; flex-direction: column; justify-content: center; }
+.editorial-right {
+  position: relative; overflow: hidden;
+  min-height: 360px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9rem;
+}
+.editorial-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(200,134,26,0.15), transparent 70%);
+}
+.editorial-list { list-style: none; margin-top: 28px; }
+.editorial-list li {
+  display: flex; align-items: center; gap: 12px;
+  color: rgba(247,242,235,0.65); font-size: 0.92rem;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.editorial-list li:last-child { border-bottom: none; }
+.editorial-list li::before {
+  content: '→'; color: var(--amber); font-weight: 700; font-size: 0.85rem;
+}
+
+/* ── CTA BAND ── */
+.cta-band {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--terra2) 100%);
+  padding: 72px 5%; text-align: center; position: relative; overflow: hidden;
+}
+.cta-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+@media (max-width: 900px) {
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .editorial { grid-template-columns: 1fr; }
+  .editorial-right { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-line" id="scrollLine"></div>
+
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo-wrap">🚌</div>
+    <span class="nav-brand-name">Yatra</em> Yug</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link active hide-sm">Home</a>
+    <a href="destinations.html" class="nav-link hide-sm">Destinations</a>
+    <div id="navUser"></div>
+  </div>
+</nav>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-canvas"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow reveal">
+        <div class="hero-eyebrow-dot"></div>
+        <span class="eyebrow">Explore Incredible India</span>
+      </div>
+      <h1 class="hero-title reveal d1">
+        Journey to<br>
+        <em>Extraordinary</em><br>
+        <span class="underline-word">Destinations</span>
+      </h1>
+      <p class="hero-desc reveal d2">
+        Plan, book and explore India's most iconic destinations — personalised bus trips, instant budget estimates, curated local experiences.
+      </p>
+      <div class="hero-actions reveal d3">
+        <a href="destinations.html" class="btn btn-amber">Explore Destinations</a>
+        <a href="register.html" class="btn btn-ghost-light" id="heroSecBtn">Start for Free →</a>
+      </div>
+      <div class="hero-stats reveal d4">
+        <div><div class="hs-num" id="statTrips">0<span>+</span></div><div class="hs-lbl">Destinations</div></div>
+        <div><div class="hs-num" id="statTrav">0<span>K+</span></div><div class="hs-lbl">Travellers</div></div>
+        <div><div class="hs-num" id="statRat">0<span>★</span></div><div class="hs-lbl">Avg Rating</div></div>
+      </div>
+    </div>
+    <div class="hero-right reveal d2">
+      <div class="float-card fc1">
+        <div class="float-card-cover">🏔️</div>
+        <div class="float-card-info">
+          <div class="float-card-name">Manali</div>
+          <div class="float-card-meta">Himachal Pradesh</div>
+          <div class="float-card-rating">★ 4.8</div>
+        </div>
+      </div>
+      <div class="float-card fc2">
+        <div class="float-card-cover">⛰️</div>
+        <div class="float-card-info">
+          <div class="float-card-name">Leh-Ladakh</div>
+          <div class="float-card-meta">J&K / Ladakh</div>
+          <div class="float-card-rating">★ 4.9</div>
+        </div>
+      </div>
+      <div class="float-card fc3">
+        <div class="float-card-cover">🏖️</div>
+        <div class="float-card-info">
+          <div class="float-card-name">Goa</div>
+          <div class="float-card-meta">Coastal Paradise</div>
+          <div class="float-card-rating">★ 4.9</div>
+        </div>
+      </div>
+      <div class="float-card fc4">
+        <div class="float-card-cover">🕌</div>
+        <div class="float-card-info">
+          <div class="float-card-name">Agra</div>
+          <div class="float-card-meta">Uttar Pradesh</div>
+          <div class="float-card-rating">★ 4.8</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="mqTrack"></div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="search-section">
+  <div class="search-bar-mega reveal">
+    <span style="font-size:1.2rem">🔍</span>
+    <input class="sbm-input" id="heroQ" placeholder="Search Manali, Goa, Rajasthan, Hampi…" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <div class="sbm-divider hide-sm"></div>
+    <select class="sbm-input hide-sm" style="max-width:160px;cursor:pointer" id="heroCat">
+      <option value="">All Categories</option>
+      <option>Mountains</option><option>Beach</option><option>Heritage</option>
+      <option>Hills</option><option>Adventure</option><option>Wildlife</option>
+      <option>Nature</option><option>Spiritual</option>
+    </select>
+    <button class="sbm-btn" onclick="doSearch()">Search Destinations →</button>
+  </div>
+</div>
+
+<!-- FEATURED DESTINATIONS -->
+<section class="section section-cream">
+  <div class="reveal" style="margin-bottom:48px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <div class="eyebrow" style="margin-bottom:12px">Curated for you</div>
+      <h2 class="display-l" style="color:var(--ink2)">India's Finest <em style="font-style:italic;color:var(--amber)">Journeys</em></h2>
+    </div>
+    <a href="destinations.html" class="btn btn-outline btn-sm">View All 20 →</a>
+  </div>
+
+  <div class="cat-strip reveal d1" id="homeCatStrip">
+    <button class="cat-btn active" onclick="filterHome('')">All Destinations</button>
+    <button class="cat-btn" onclick="filterHome('Mountains')">⛰️ Mountains</button>
+    <button class="cat-btn" onclick="filterHome('Beach')">🏖️ Beach</button>
+    <button class="cat-btn" onclick="filterHome('Heritage')">🏛️ Heritage</button>
+    <button class="cat-btn" onclick="filterHome('Hills')">🌿 Hills</button>
+    <button class="cat-btn" onclick="filterHome('Adventure')">🧗 Adventure</button>
+    <button class="cat-btn" onclick="filterHome('Wildlife')">🐯 Wildlife</button>
+    <button class="cat-btn" onclick="filterHome('Spiritual')">🪔 Spiritual</button>
+  </div>
+
+  <div class="featured-grid" id="featuredGrid"></div>
+</section>
+
+<!-- EDITORIAL FEATURE BLOCK -->
+<section class="section section-cream2">
+  <div class="editorial reveal">
+    <div class="editorial-left">
+      <div class="eyebrow" style="color:var(--amber);margin-bottom:16px">Why Choose Us</div>
+      <h2 style="font-family:var(--font-display);font-size:2.6rem;color:var(--white);margin-bottom:16px;line-height:1.1">Everything You Need<br>for the <em style="color:var(--amber2)">Perfect Trip</em></h2>
+      <p style="color:rgba(247,242,235,0.55);line-height:1.75;font-size:0.92rem;margin-bottom:28px">From real-time budget calculators to curated local experiences — we handle every detail so you can focus on the adventure.</p>
+      <ul class="editorial-list">
+        <li>Per-km transparent pricing with full cost breakdown</li>
+        <li>3–4 must-visit places curated at each destination</li>
+        <li>4 bus categories for every budget and comfort level</li>
+        <li>Personal dashboard to manage all your bookings</li>
+        <li>Best travel season guidance for every destination</li>
+      </ul>
+      <a href="plan-trip.html" class="btn btn-amber" style="margin-top:32px;width:fit-content" id="editorialBtn">Start Planning →</a>
+    </div>
+    <div class="editorial-right">
+      <div style="position:relative;z-index:1;text-align:center">
+        <div style="font-size:7rem;margin-bottom:16px;filter:drop-shadow(0 8px 32px rgba(200,134,26,0.4))">🚌</div>
+        <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--amber2);font-style:italic">India awaits you</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band" id="ctaBand">
+  <div style="position:relative;z-index:1;max-width:600px;margin:0 auto">
+    <div class="eyebrow reveal" style="color:var(--ink);justify-content:center;margin-bottom:16px">Get Started Free</div>
+    <h2 class="reveal d1" style="font-family:var(--font-display);font-size:3rem;color:var(--ink);margin-bottom:16px;line-height:1.1">Your Next Great<br>Adventure Awaits</h2>
+    <p class="reveal d2" style="color:rgba(14,12,10,0.65);margin-bottom:32px;font-size:1.02rem">Join thousands who plan perfect bus journeys across India.</p>
+    <div class="reveal d3" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="register.html" class="btn btn-dark" style="font-size:1rem;padding:15px 36px">Create Free Account</a>
+      <a href="destinations.html" class="btn btn-outline" style="font-size:1rem;padding:15px 36px;border-color:var(--ink)">Browse Destinations</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <p style="margin-bottom:4px">
+    <strong>Yatra Yug</strong> &nbsp;·&nbsp; Crafted for Indian travellers
+    &nbsp;·&nbsp; <a href="destinations.html">Destinations</a>
+    &nbsp;·&nbsp; <a href="plan-trip.html">Plan Trip</a>
+    &nbsp;·&nbsp; <a href="dashboard.html">Dashboard</a>
+  </p>
+  <p>&copy; 2024 Yatra Yug. All rights reserved.</p>
+</footer>
+
+<script src="data.js"></script>
+<script>
+/* ── CURSOR ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+function animRing() {
+  rx+=(mx-rx)*0.14; ry+=(my-ry)*0.14;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('a,button,.dest-card,.float-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cur.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.transform='translate(-50%,-50%) scale(1.5)'; });
+  el.addEventListener('mouseleave', () => { cur.style.transform='translate(-50%,-50%) scale(1)'; ring.style.transform='translate(-50%,-50%) scale(1)'; });
+});
+
+/* ── SCROLL ── */
+const scrollLine = document.getElementById('scrollLine');
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  scrollLine.style.transform = `scaleX(${pct})`;
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ── REVEAL ON SCROLL ── */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => ro.observe(el));
+
+/* ── COUNTER ANIMATION ── */
+function countUp(el, target, suffix='', duration=1600) {
+  let start=0, startTime=null;
+  function step(ts) {
+    if(!startTime) startTime=ts;
+    const p = Math.min((ts-startTime)/duration,1);
+    const ease = 1-Math.pow(1-p,3);
+    el.firstChild.textContent = Math.round(ease*target);
+    if(p<1) requestAnimationFrame(step);
+    else el.firstChild.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+setTimeout(()=>{
+  countUp(document.getElementById('statTrips'), 20);
+  countUp(document.getElementById('statTrav'), 50);
+  const ratEl = document.getElementById('statRat');
+  ratEl.firstChild.textContent = '4.8';
+}, 800);
+
+/* ── AUTH STATE ── */
+const u = getSession();
+if(u) {
+  document.getElementById('heroSecBtn').textContent='Plan My Trip →';
+  document.getElementById('heroSecBtn').href='plan-trip.html';
+  document.getElementById('editorialBtn').href='plan-trip.html';
+  document.getElementById('ctaBand').style.display='none';
+}
+renderNavUser('navUser');
+
+/* ── MARQUEE ── */
+const places=['🏔️ Manali','🏰 Jaipur','🏖️ Goa','🍃 Munnar','⛰️ Ladakh','🚂 Shimla','🌅 Darjeeling','🌹 Ooty','💎 Udaipur','🕌 Agra','🪔 Varanasi','🧘 Rishikesh','☕ Coorg','🐠 Andaman','👑 Mysuru','🏞️ Nainital','🐯 Jim Corbett','🦁 Ranthambore','🏜️ Spiti Valley','🗿 Hampi'];
+const mqTrack = document.getElementById('mqTrack');
+mqTrack.innerHTML=[...places,...places].map(p=>`<div class="marquee-item"><div class="marquee-dot"></div>${p}</div>`).join('');
+
+/* ── FEATURED GRID ── */
+let activeCat='';
+function filterHome(cat) {
+  activeCat=cat;
+  document.querySelectorAll('.cat-btn').forEach((b,i)=>{ b.classList.toggle('active', (cat==='' && i===0)||(b.textContent.includes(cat))); });
+  renderFeatured();
+}
+function renderFeatured() {
+  let list = [...DESTINATIONS].sort((a,b)=>b.rating-a.rating);
+  if(activeCat) list=list.filter(d=>d.cat===activeCat);
+  list=list.slice(0,8);
+  document.getElementById('featuredGrid').innerHTML = list.map(d=>`
+    <a href="destination.html?id=${d.id}" class="dest-card reveal">
+      <div class="dest-card-img">
+        <div class="dest-card-img-bg" style="background:linear-gradient(135deg,${d.color},${d.color}aa)">
+          <span style="font-size:4.5rem;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.4))">${d.emoji}</span>
+        </div>
+        <span class="dest-card-emoji">${d.emoji}</span>
+        <div class="dest-card-rating">★ ${d.rating}</div>
+        <div class="dest-card-title-wrap">
+          <div class="dest-card-name">${d.name}</div>
+          <div class="dest-card-state">📍 ${d.state}</div>
+        </div>
+      </div>
+      <div class="dest-card-body">
+        <div class="dest-card-tags">
+          <span class="badge badge-amber">${d.cat}</span>
+          <span class="badge badge-stone">🌤️ ${d.season}</span>
+        </div>
+        <div class="dest-card-stats">
+          <div class="dcs"><strong>${d.km} km</strong>Distance</div>
+          <div class="dcs"><strong>${fmt(d.km*2.5+3100)}</strong>Min. Budget</div>
+          <div class="dcs"><strong>★${d.rating}</strong>Rating</div>
+        </div>
+      </div>
+    </a>`).join('');
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+}
+renderFeatured();
+
+function doSearch() {
+  const q=document.getElementById('heroQ').value.trim();
+  const cat=document.getElementById('heroCat')?.value||'';
+  let url='destinations.html?';
+  if(q) url+='search='+encodeURIComponent(q)+'&';
+  if(cat) url+='cat='+encodeURIComponent(cat);
+  window.location.href=url;
+}
+
+function renderNavUser(id) {
+  const el=document.getElementById(id); if(!el) return;
+  if(u) {
+    el.innerHTML=`
+      <a href="plan-trip.html" class="nav-link hide-sm">Plan Trip</a>
+      <a href="dashboard.html" class="nav-link hide-sm">My Trips</a>
+      <div class="nav-user-chip">
+        <div class="nav-avatar">${u.name[0].toUpperCase()}</div>
+        <span class="hide-sm">${u.name.split(' ')[0]}</span>
+      </div>
+      <a href="#" onclick="logout()" class="nav-logout">Logout</a>`;
+  } else {
+    el.innerHTML=`
+      <a href="login.html" class="nav-link hide-sm">Login</a>
+      <a href="register.html" class="nav-cta">Get Started</a>`;
+  }
+}
+</script>
+</body>
+</html>

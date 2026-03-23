@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Create Account — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.auth-left { background: linear-gradient(160deg, var(--ink2) 0%, #1a0e08 60%, #0a1f14 100%); }
+.auth-left-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 30% 30%, rgba(200,134,26,0.15) 0%, transparent 55%),
+              radial-gradient(ellipse 50% 50% at 70% 70%, rgba(61,107,86,0.12) 0%, transparent 50%);
+}
+.al-inner { position: relative; z-index: 1; max-width: 440px; }
+.perks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+.perk-card {
+  background: rgba(247,242,235,0.05); border: 1px solid rgba(247,242,235,0.08);
+  border-radius: 16px; padding: 18px 16px;
+  transition: all 0.25s var(--ease);
+}
+.perk-card:hover { background: rgba(247,242,235,0.09); transform: translateY(-3px); }
+.perk-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.perk-title { font-weight: 700; color: var(--white); font-size: 0.88rem; margin-bottom: 4px; }
+.perk-desc { font-size: 0.78rem; color: rgba(247,242,235,0.42); line-height: 1.5; }
+
+.auth-right { background: var(--cream); }
+.auth-logo {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--amber), var(--amber2));
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(200,134,26,0.35);
+}
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.strength-bar { height: 4px; border-radius: 2px; background: var(--cream2); margin-top: 6px; overflow: hidden; }
+.strength-fill { height: 100%; border-radius: 2px; transition: all 0.3s; }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<nav class="navbar scrolled">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo-wrap">🚌</div>
+    <span class="nav-brand-name">TYatra</em> Yug</span>
+  </a>
+  <div class="nav-links">
+    <span style="color:rgba(255,255,255,.45);font-size:.85rem">Have an account?</span>
+    <a href="login.html" class="nav-cta">Sign In</a>
+  </div>
+</nav>
+<main>
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="al-inner">
+      <div class="eyebrow" style="color:var(--amber);margin-bottom:20px">Join Free Today</div>
+      <h2 style="font-family:var(--font-display);font-size:2.5rem;color:var(--white);line-height:1.15;margin-bottom:14px">
+        Start Your <em style="font-style:italic;color:var(--amber2)">Journey</em><br>Across India
+      </h2>
+      <p style="color:rgba(247,242,235,0.5);font-size:0.9rem;line-height:1.7">
+        Everything you need to plan the perfect bus journey — free forever, no credit card required.
+      </p>
+      <div class="perks-grid">
+        <div class="perk-card">
+          <div class="perk-icon">🗺️</div>
+          <div class="perk-title">20 Destinations</div>
+          <div class="perk-desc">Manali to Hampi and everything in between</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">💰</div>
+          <div class="perk-title">Budget Calc</div>
+          <div class="perk-desc">Real-time cost estimates per km</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">🚌</div>
+          <div class="perk-title">4 Bus Types</div>
+          <div class="perk-desc">Standard to Volvo AC for any budget</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">📋</div>
+          <div class="perk-title">Dashboard</div>
+          <div class="perk-desc">Manage all your bookings in one place</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-logo">🌏</div>
+      <h1 class="reveal">Create your account</h1>
+      <p class="sub reveal d1">Free &amp; takes less than a minute</p>
+      <div id="errMsg"></div>
+      <div class="fg reveal d2">
+        <label>Full Name</label>
+        <div class="ic-wrap">
+          <span class="ic">👤</span>
+          <input class="fc" type="text" id="name" placeholder="Arjun Sharma" required/>
+        </div>
+      </div>
+      <div class="fg reveal d2">
+        <label>Email Address</label>
+        <div class="ic-wrap">
+          <span class="ic">📧</span>
+          <input class="fc" type="email" id="email" placeholder="you@email.com" required/>
+        </div>
+      </div>
+      <div class="fg reveal d3">
+        <label>Phone Number <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+        <div class="ic-wrap">
+          <span class="ic">📱</span>
+          <input class="fc" type="tel" id="phone" placeholder="+91 98765 43210"/>
+        </div>
+      </div>
+      <div class="fg reveal d3">
+        <label>Location <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+        <div class="ic-wrap">
+          <span class="ic">📍</span>
+          <input class="fc" type="text" id="location" placeholder="Delhi, India"/>
+        </div>
+      </div>
+      <div class="fg reveal d3">
+        <label>Password</label>
+        <div class="ic-wrap">
+          <span class="ic">🔒</span>
+          <input class="fc" type="password" id="pwd" placeholder="At least 6 characters" required oninput="checkStrength(this.value)"/>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%"></div></div>
+      </div>
+      <button class="auth-submit reveal d4" onclick="doRegister()">Create Free Account →</button>
+      <p style="font-size:0.75rem;color:var(--muted);text-align:center;margin-top:10px" class="reveal d4">By signing up you agree to our Terms of Service</p>
+      <div class="auth-foot reveal d5">Already have an account? <a href="login.html">Sign in</a></div>
+    </div>
+  </div>
+</div>
+</main>
+<script src="data.js"></script>
+<script>
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+if(getSession()) window.location.href='dashboard.html';
+function checkStrength(pwd) {
+  const fill=document.getElementById('strengthFill');
+  let score=0;
+  if(pwd.length>=6) score++;
+  if(pwd.length>=10) score++;
+  if(/[A-Z]/.test(pwd)) score++;
+  if(/[0-9]/.test(pwd)) score++;
+  const colors=['#e74c3c','#e67e22','#f1c40f','#27ae60'];
+  fill.style.width=(score*25)+'%';
+  fill.style.background=colors[score-1]||'transparent';
+}
+async function doRegister(){
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const phone=document.getElementById('phone').value.trim();
+  const location=document.getElementById('location').value.trim();
+  const pwd=document.getElementById('pwd').value;
+  if(!name||!email||!pwd){showErr('Please fill all required fields.');return;}
+  if(pwd.length<6){showErr('Password must be at least 6 characters.');return;}
+  try{
+    const user=await apiRegisterUser({name,email,phone,location,password_hash:hashSimple(pwd)});
+    setSession({id:user.id,name:user.name,email:user.email});
+    window.location.href='dashboard.html';
+  }catch(err){
+    showErr(err.message||'Unable to create account right now.');
+  }
+}
+function showErr(msg){document.getElementById('errMsg').innerHTML=`<div class="alert alert-err">⚠️ ${msg}</div>`;}
+</script>
+</body>
+</html>

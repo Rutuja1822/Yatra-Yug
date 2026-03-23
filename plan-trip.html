@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Plan Your Trip — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.planner-layout { display: grid; grid-template-columns: 1fr 420px; gap: 32px; padding: 48px 5%; align-items: start; }
+.plan-block { background: var(--white); border-radius: 22px; padding: 30px; box-shadow: 0 2px 16px rgba(14,12,10,.07); border: 1px solid var(--cream2); margin-bottom: 24px; }
+.plan-block h2 { font-family: var(--font-display); font-size: 1.35rem; color: var(--ink2); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+.dest-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px,1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 2px; }
+.dest-pick-grid::-webkit-scrollbar { width: 4px; }
+.dest-pick-grid::-webkit-scrollbar-track { background: var(--cream2); border-radius: 2px; }
+.dest-pick-grid::-webkit-scrollbar-thumb { background: var(--stone); border-radius: 2px; }
+.dpick {
+  border: 2px solid var(--cream2); border-radius: 14px; padding: 12px 8px;
+  cursor: pointer; transition: all 0.22s var(--ease);
+  text-align: center; font-family: var(--font-body); background: var(--cream);
+}
+.dpick:hover { border-color: var(--amber); background: rgba(200,134,26,0.06); }
+.dpick.sel { border-color: var(--amber); background: rgba(200,134,26,0.1); box-shadow: 0 0 0 4px rgba(200,134,26,0.1); }
+.dpick .de { font-size: 1.7rem; margin-bottom: 6px; display: block; }
+.dpick .dn { font-size: 0.78rem; font-weight: 700; color: var(--ink2); }
+.dpick .dk { font-size: 0.7rem; color: var(--muted); }
+.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* result panel */
+.result-panel {
+  background: var(--ink2); border-radius: 24px; padding: 30px;
+  position: sticky; top: 90px;
+  box-shadow: 0 20px 60px rgba(14,12,10,0.25);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.result-panel h2 { font-family: var(--font-display); font-size: 1.3rem; color: var(--white); margin-bottom: 22px; }
+.rp-empty { text-align: center; padding: 32px 0; color: rgba(247,242,235,0.4); }
+.rp-empty .ri { font-size: 3rem; margin-bottom: 12px; }
+.dest-selected-card {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 14px; display: flex; gap: 12px; align-items: center; margin-bottom: 20px;
+}
+.dsc-emoji { font-size: 1.8rem; }
+.dsc-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--white); font-weight: 600; }
+.dsc-sub { font-size: 0.78rem; color: rgba(247,242,235,0.45); }
+.cost-hero {
+  background: linear-gradient(135deg, rgba(200,134,26,0.15), rgba(184,68,26,0.1));
+  border: 1px solid rgba(200,134,26,0.2);
+  border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 18px;
+}
+.cost-num { font-family: var(--font-display); font-size: 2.6rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.cost-lbl { font-size: 0.78rem; color: rgba(247,242,235,0.45); margin-top: 5px; font-family: var(--font-mono); }
+.breakdown { border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+.bk-r { display: flex; justify-content: space-between; padding: 10px 14px; font-size: 0.86rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.04); }
+.bk-r:last-child { border-bottom: none; }
+.bk-r.btot { background: rgba(200,134,26,0.15); font-weight: 700; font-size: 0.95rem; }
+.bk-r.btot .bv { color: var(--amber); font-size: 1.05rem; }
+.bv { font-weight: 600; color: rgba(247,242,235,0.85); }
+.bk-lbl { color: rgba(247,242,235,0.55); }
+.go-book { width: 100%; padding: 14px; background: linear-gradient(135deg,var(--amber),var(--terra2)); color: var(--white); border: none; border-radius: 12px; font-family: var(--font-body); font-size: 0.97rem; font-weight: 700; cursor: pointer; transition: all 0.25s var(--ease); box-shadow: 0 6px 20px rgba(200,134,26,0.35); }
+.go-book:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(200,134,26,0.45); }
+
+/* bus type cards */
+.bus-types { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bus-tc { border-radius: 14px; padding: 16px 14px; border: 2px solid var(--cream2); transition: all 0.2s; cursor: pointer; }
+.bus-tc:hover { border-color: var(--amber); transform: translateY(-3px); }
+.bus-tc .bt-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.bus-tc .bt-name { font-weight: 700; color: var(--ink2); font-size: 0.9rem; margin-bottom: 2px; }
+.bus-tc .bt-rate { color: var(--amber); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+.bus-tc .bt-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+@media(max-width:900px){.planner-layout{grid-template-columns:1fr}.result-panel{position:static}.details-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-line" id="scrollLine"></div>
+<nav class="navbar scrolled" id="navbar">
+  <a href="index.html" class="nav-brand"><div class="nav-logo-wrap">🚌</div><span class="nav-brand-name">Yatra</em> Yug</span></a>
+  <div class="nav-links">
+    <a href="destinations.html" class="nav-link hide-sm">Destinations</a>
+    <div id="navUser"></div>
+  </div>
+</nav>
+<main>
+<div class="page-hero">
+  <div class="eyebrow reveal" style="color:var(--amber);justify-content:center;margin-bottom:14px">Interactive Planner</div>
+  <h1 class="display-l reveal d1" style="color:var(--white);margin-bottom:12px">Plan the <em style="font-style:italic;color:var(--amber2)">Perfect Trip</em></h1>
+  <p class="reveal d2" style="color:rgba(247,242,235,.55);max-width:480px;margin:0 auto">Select a destination, set group size and bus type — your budget appears instantly</p>
+</div>
+<div class="planner-layout">
+  <div>
+    <div class="plan-block reveal">
+      <h2>1️⃣ Choose Your Destination</h2>
+      <div class="dest-pick-grid" id="dpGrid"></div>
+    </div>
+
+  </div>
+  <div>
+    <div class="result-panel reveal">
+      <h2>💰 Budget Estimate</h2>
+      <div id="rpEmpty" class="rp-empty"><div class="ri">🗺️</div><p>Select a destination to see your budget breakdown</p></div>
+      <div id="rpResult" style="display:none">
+        <div class="dest-selected-card" id="dscCard"></div>
+        <div class="cost-hero">
+          <div class="cost-num" id="perHead">₹0</div>
+          <div class="cost-lbl">ESTIMATED COST PER PERSON</div>
+        </div>
+        <div class="breakdown">
+          <div class="bk-r"><span class="bk-lbl">🚌 Bus Fare</span><span class="bv" id="r1">–</span></div>
+          <div class="bk-r"><span class="bk-lbl">🏨 Accommodation</span><span class="bv" id="r2">–</span></div>
+          <div class="bk-r"><span class="bk-lbl">🍽️ Food</span><span class="bv" id="r3">–</span></div>
+          <div class="bk-r"><span class="bk-lbl">🎯 Sightseeing</span><span class="bv" id="r4">–</span></div>
+          <div class="bk-r"><span class="bk-lbl">📦 Miscellaneous</span><span class="bv" id="r5">–</span></div>
+          <div class="bk-r btot"><span>Total Estimate</span><span class="bv" id="r6">–</span></div>
+        </div>
+        <button class="go-book" onclick="goBook()">Book This Trip →</button>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<footer><p><strong>Yatra Yug</strong> &nbsp;·&nbsp; &copy; 2024 &nbsp;·&nbsp; <a href="index.html">Home</a></p></footer>
+<script src="data.js"></script>
+<script>
+requireLogin('plan-trip.html');
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+window.addEventListener('scroll',()=>{const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);document.getElementById('scrollLine').style.transform=`scaleX(${pct})`;});
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+renderNavUser('navUser');
+
+const td=document.getElementById('pTD'),rd=document.getElementById('pRD');
+if(td && rd){
+  td.min=rd.min=today();
+  td.addEventListener('change',function(){rd.min=this.value;});
+}
+
+document.getElementById('dpGrid').innerHTML=DESTINATIONS.map(d=>`
+  <button class="dpick" id="dp-${d.id}" onclick="selDest(${d.id})">
+    <span class="de">${d.emoji}</span>
+    <div class="dn">${d.name}</div>
+    <div class="dk">${d.km} km</div>
+  </button>`).join('');
+
+let sel=null;
+function selDest(id){
+  document.querySelectorAll('.dpick').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('dp-'+id).classList.add('sel');
+  sel=DESTINATIONS.find(d=>d.id===id);
+  document.getElementById('rpEmpty').style.display='none';
+  document.getElementById('rpResult').style.display='block';
+  calc();
+}
+function calc(){
+  if(!sel)return;
+  const pax=parseInt(document.getElementById('pPax')?.value || '1', 10) || 1;
+  const bus=document.getElementById('pBus')?.value || 'Standard';
+  const b=calcBudget(sel.km,pax,bus);
+  document.getElementById('dscCard').innerHTML=`<span class="dsc-emoji">${sel.emoji}</span><div><div class="dsc-name">${sel.name}</div><div class="dsc-sub">📍 ${sel.state} · ${sel.km} km · ${bus}</div></div>`;
+  document.getElementById('r1').textContent=fmt(b.fuel);
+  document.getElementById('r2').textContent=fmt(b.accom);
+  document.getElementById('r3').textContent=fmt(b.food);
+  document.getElementById('r4').textContent=fmt(b.sight);
+  document.getElementById('r5').textContent=fmt(b.misc);
+  document.getElementById('r6').textContent=fmt(b.total);
+  document.getElementById('perHead').textContent=fmt(b.total/pax);
+}
+function goBook(){if(sel)window.location.href='destination.html?id='+sel.id;}
+function renderNavUser(id){
+  const el=document.getElementById(id);if(!el)return;
+  const u=getSession();
+  if(u){el.innerHTML=`<a href="dashboard.html" class="nav-link hide-sm">My Trips</a><div class="nav-user-chip"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="hide-sm">${u.name.split(' ')[0]}</span></div><a href="#" onclick="logout()" class="nav-logout">Logout</a>`;}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sign In — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.auth-left { background: var(--ink2); }
+.auth-left-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 20% 40%, rgba(200,134,26,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 50% at 80% 80%, rgba(184,68,26,0.12) 0%, transparent 50%);
+}
+.auth-left-grid {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: linear-gradient(rgba(247,242,235,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247,242,235,1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.al-inner { position: relative; z-index: 1; max-width: 420px; }
+.al-quote {
+  font-family: var(--font-display); font-size: 2.8rem; font-weight: 400;
+  color: var(--white); line-height: 1.15; margin-bottom: 20px; font-style: italic;
+}
+.al-quote em { font-style: normal; color: var(--amber2); font-weight: 700; }
+.al-caption { color: rgba(247,242,235,0.45); font-size: 0.88rem; margin-bottom: 40px; line-height: 1.6; }
+.dest-previews { display: flex; flex-direction: column; gap: 10px; }
+.dp-item {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(247,242,235,0.05); border: 1px solid rgba(247,242,235,0.08);
+  border-radius: 14px; padding: 14px 18px;
+  transition: all 0.25s var(--ease);
+}
+.dp-item:hover { background: rgba(247,242,235,0.09); transform: translateX(6px); }
+.dp-emoji { font-size: 1.6rem; }
+.dp-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--white); font-weight: 600; }
+.dp-sub { font-size: 0.78rem; color: rgba(247,242,235,0.45); }
+.dp-badge { margin-left: auto; }
+
+.auth-right { background: var(--cream); }
+.auth-logo {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--amber), var(--amber2));
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(200,134,26,0.35);
+}
+.divider-line {
+  height: 1px; background: var(--cream2);
+  margin: 20px 0; position: relative;
+}
+.divider-line::before {
+  content: 'or'; position: absolute;
+  top: -9px; left: 50%; transform: translateX(-50%);
+  background: var(--cream); padding: 0 12px;
+  color: var(--muted); font-size: 0.78rem;
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<nav class="navbar scrolled">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo-wrap">🚌</div>
+    <span class="nav-brand-name">Yatra</em> Yug</span>
+  </a>
+  <div class="nav-links">
+    <span style="color:rgba(255,255,255,.45);font-size:.85rem">New here?</span>
+    <a href="register.html" class="nav-cta">Create Account →</a>
+  </div>
+</nav>
+<main>
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="auth-left-grid"></div>
+    <div class="al-inner">
+      <div class="eyebrow" style="color:var(--amber);margin-bottom:24px">Welcome back</div>
+      <div class="al-quote">"Every journey begins with a <em>single</em> step — and the right bus."</div>
+      <p class="al-caption">Sign in to access your personalised trip planner, saved bookings, and 20 iconic destinations across India.</p>
+      <div class="dest-previews">
+        <div class="dp-item">
+          <span class="dp-emoji">🏔️</span>
+          <div><div class="dp-name">Manali</div><div class="dp-sub">Himachal Pradesh · 2050 km</div></div>
+          <span class="dp-badge badge badge-dark">★ 4.8</span>
+        </div>
+        <div class="dp-item">
+          <span class="dp-emoji">⛰️</span>
+          <div><div class="dp-name">Leh-Ladakh</div><div class="dp-sub">J&K / Ladakh · 2700 km</div></div>
+          <span class="dp-badge badge badge-dark">★ 4.9</span>
+        </div>
+        <div class="dp-item">
+          <span class="dp-emoji">🗿</span>
+          <div><div class="dp-name">Hampi</div><div class="dp-sub">Karnataka · 1400 km</div></div>
+          <span class="dp-badge badge badge-dark">★ 4.8</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-logo">🚌</div>
+      <h1 class="reveal">Welcome back</h1>
+      <p class="sub reveal d1">Sign in to continue your journey</p>
+      <div id="errMsg"></div>
+      <div class="fg reveal d2">
+        <label>Email Address</label>
+        <div class="ic-wrap">
+          <span class="ic">📧</span>
+          <input class="fc" type="email" id="email" placeholder="you@email.com" required/>
+        </div>
+      </div>
+      <div class="fg reveal d3">
+        <label>Password</label>
+        <div class="ic-wrap">
+          <span class="ic">🔒</span>
+          <input class="fc" type="password" id="pwd" placeholder="••••••••" required/>
+        </div>
+      </div>
+      <button class="auth-submit reveal d4" onclick="doLogin()">Sign In to Yatra Yug →</button>
+      <div class="auth-foot reveal d5">Don't have an account? <a href="register.html">Create one free</a></div>
+    </div>
+  </div>
+</div>
+</main>
+<script src="data.js"></script>
+<script>
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+if(getSession()) window.location.href='dashboard.html';
+const reason=new URLSearchParams(location.search).get('reason');
+if(reason==='session') showErr('Your previous session is no longer valid. Please sign in again.');
+async function doLogin(){
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const pwd=document.getElementById('pwd').value;
+  if(!email||!pwd){showErr('Please fill all fields.');return;}
+  try{
+    const user=await apiLoginUser(email,hashSimple(pwd));
+    setSession({id:user.id,name:user.name,email:user.email});
+    const next=new URLSearchParams(location.search).get('next');
+    window.location.href=next||'dashboard.html';
+  }catch(err){
+    showErr(err.message||'Invalid email or password. Please try again.');
+  }
+}
+function showErr(msg){document.getElementById('errMsg').innerHTML=`<div class="alert alert-err">⚠️ ${msg}</div>`;}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>

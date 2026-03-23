@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>My Dashboard — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.dash-hero {
+  background: linear-gradient(160deg, var(--ink2) 0%, #16100a 60%, #0a1a12 100%);
+  padding: 52px 5% 44px; position: relative; overflow: hidden;
+}
+.dash-hero::before { content:''; position:absolute; width:500px; height:500px; background:radial-gradient(circle,rgba(200,134,26,.15),transparent 65%); top:-150px; right:-80px; border-radius:50%; }
+.dash-hero::after  { content:''; position:absolute; width:360px; height:360px; background:radial-gradient(circle,rgba(61,107,86,.1),transparent 65%); bottom:-80px; left:5%; border-radius:50%; }
+.dh-inner { position:relative; z-index:1; }
+.dh-av { width:56px; height:56px; background:linear-gradient(135deg,var(--sage),var(--sage2)); border-radius:16px; display:inline-flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:900; color:#fff; margin-bottom:14px; box-shadow:0 8px 24px rgba(61,107,86,.3); }
+.dh-name { font-family:var(--font-display); font-size:2.2rem; color:var(--white); margin-bottom:4px; }
+.dh-name em { font-style:italic; color:var(--amber2); }
+.dh-email { color:rgba(247,242,235,.42); font-size:.85rem; margin-bottom:28px; font-family:var(--font-mono); }
+.dh-stat-row { display:flex; gap:16px; flex-wrap:wrap; }
+.dhsr { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.09); border-radius:14px; padding:14px 20px; display:flex; align-items:center; gap:11px; transition:all .25s var(--ease); }
+.dhsr:hover { background:rgba(255,255,255,.09); transform:translateY(-2px); }
+.dhsr .dv { font-family:var(--font-display); font-size:1.5rem; color:var(--white); font-weight:700; line-height:1; }
+.dhsr .dl { font-size:.72rem; color:rgba(247,242,235,.42); font-family:var(--font-mono); margin-top:3px; letter-spacing:.04em; }
+.dash-body { padding:44px 5%; }
+.section-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:28px; }
+.booking-card {
+  background:var(--white); border-radius:20px; overflow:hidden; display:flex;
+  box-shadow:0 4px 20px rgba(14,12,10,.07); border:1px solid var(--cream2);
+  margin-bottom:18px; transition:all .35s var(--ease);
+}
+.booking-card:hover { box-shadow:0 16px 48px rgba(14,12,10,.14); transform:translateX(6px); }
+.bc-stripe { width:90px; min-width:90px; display:flex; align-items:center; justify-content:center; font-size:2.8rem; position:relative; }
+.bc-stripe::after { content:''; position:absolute; right:0; top:0; bottom:0; width:1px; background:var(--cream2); }
+.bc-body { flex:1; padding:20px; }
+.bc-top { display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+.bc-name { font-family:var(--font-display); font-size:1.2rem; color:var(--ink2); font-weight:700; }
+.bc-state { color:var(--muted); font-size:.8rem; margin-bottom:12px; }
+.bc-meta { display:flex; gap:16px; flex-wrap:wrap; font-size:.83rem; }
+.bc-mi { display:flex; align-items:center; gap:4px; color:var(--muted); }
+.bc-mi strong { color:var(--ink2); font-weight:600; }
+.bc-foot { margin-top:12px; padding-top:12px; border-top:1px solid var(--cream2); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.bc-amount { font-family:var(--font-display); font-size:1.2rem; color:var(--sage2); font-weight:900; }
+.bc-status { background:rgba(61,107,86,.1); color:var(--sage2); border:1px solid rgba(61,107,86,.2); padding:4px 12px; border-radius:50px; font-size:.74rem; font-weight:700; }
+.empty-dash { text-align:center; padding:80px 20px; }
+.empty-dash .ei { font-size:4rem; margin-bottom:16px; }
+.plans-section { margin-top:34px; }
+.plans-table-wrap {
+  background:var(--white);
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid var(--cream2);
+  box-shadow:0 4px 20px rgba(14,12,10,.07);
+}
+.plans-table { width:100%; border-collapse:collapse; min-width:1180px; }
+.plans-table th,
+.plans-table td {
+  padding:16px 18px;
+  text-align:left;
+  border-bottom:1px solid var(--cream2);
+  font-size:.88rem;
+  vertical-align:top;
+}
+.plans-table th {
+  background:rgba(200,134,26,.08);
+  color:var(--ink2);
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  letter-spacing:.05em;
+}
+.plans-table td { color:var(--muted); }
+.plans-table td strong { color:var(--ink2); font-weight:700; }
+.plans-table tr:last-child td { border-bottom:none; }
+.plans-table-empty {
+  background:var(--white);
+  border:1px solid var(--cream2);
+  border-radius:20px;
+  box-shadow:0 4px 20px rgba(14,12,10,.07);
+  padding:28px 24px;
+  color:var(--muted);
+}
+@media(max-width:900px){.plans-table-wrap{overflow-x:auto;}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-line" id="scrollLine"></div>
+<nav class="navbar scrolled" id="navbar">
+  <a href="index.html" class="nav-brand"><div class="nav-logo-wrap">🚌</div><span class="nav-brand-name">Yatra</em> Yug</span></a>
+  <div class="nav-links">
+    <a href="destinations.html" class="nav-link hide-sm">Destinations</a>
+    <a href="plan-trip.html" class="nav-link hide-sm">Plan Trip</a>
+    <div id="navUser"></div>
+  </div>
+</nav>
+<main>
+<div class="dash-hero">
+  <div class="dh-inner">
+    <div class="dh-av" id="dhAv"></div>
+    <div class="dh-name" id="dhName"></div>
+    <div class="dh-email" id="dhEmail"></div>
+    <div class="dh-stat-row" id="dhStats"></div>
+  </div>
+</div>
+<div class="dash-body">
+  <div class="section-header">
+    <h2 id="bkTitle" style="font-family:var(--font-display);font-size:1.7rem;color:var(--ink2)">My Bookings</h2>
+    <div style="display:flex;gap:10px">
+      <a href="plan-trip.html" class="btn btn-amber btn-sm">+ New Trip</a>
+      <a href="destinations.html" class="btn btn-outline btn-sm">Browse</a>
+    </div>
+  </div>
+  <div id="bookingsList"></div>
+  <section class="plans-section">
+    <div class="section-header" style="margin-top:34px">
+      <h2 id="plansTitle" style="font-family:var(--font-display);font-size:1.7rem;color:var(--ink2)">Planned Trips Database</h2>
+      <a href="yatrayug_data.sql" class="btn btn-outline btn-sm">Open SQL File</a>
+    </div>
+    <div id="plansTableMount"></div>
+  </section>
+</div>
+</main>
+<footer><p><strong>Yatra Yug</strong> &nbsp;·&nbsp; &copy; 2024 &nbsp;·&nbsp; <a href="index.html">Home</a></p></footer>
+<script src="data.js"></script>
+<script>
+const sessionReady=requireLogin('dashboard.html');
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+window.addEventListener('scroll',()=>{const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);document.getElementById('scrollLine').style.transform=`scaleX(${pct})`;});
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.08});
+
+const user=getSession();
+if(sessionReady && user){
+document.getElementById('dhAv').textContent=user.name[0].toUpperCase();
+document.getElementById('dhName').innerHTML=`Hello, <em>${user.name.split(' ')[0]}</em> 👋`;
+document.getElementById('dhEmail').textContent=user.email;
+
+function renderBookings(bks){
+  const totalSpent=bks.reduce((s,b)=>s+(b.budget?.total||0),0);
+  document.getElementById('dhStats').innerHTML=`
+    <div class="dhsr"><span style="font-size:1.3rem">🚌</span><div><div class="dv">${bks.length}</div><div class="dl">TOTAL TRIPS</div></div></div>
+    <div class="dhsr"><span style="font-size:1.3rem">✅</span><div><div class="dv">${bks.filter(b=>b.status==='Confirmed').length}</div><div class="dl">CONFIRMED</div></div></div>
+    ${bks.length?`<div class="dhsr"><span style="font-size:1.3rem">💰</span><div><div class="dv">₹${(totalSpent/1000).toFixed(1)}K</div><div class="dl">TOTAL SPENT</div></div></div>`:''}`;
+  document.getElementById('bkTitle').innerHTML=`My Bookings <span style="font-size:1rem;color:var(--muted);font-family:var(--font-mono);font-weight:400">(${bks.length})</span>`;
+
+  if(bks.length){
+    document.getElementById('bookingsList').innerHTML=bks.map(b=>`
+      <div class="booking-card reveal">
+        <div class="bc-stripe" style="background:${b.color}18"><span>${b.emoji}</span></div>
+        <div class="bc-body">
+          <div class="bc-top">
+            <div><div class="bc-name">${b.destName}</div><div class="bc-state">📍 ${b.state}</div></div>
+            <span class="bc-status">${b.status}</span>
+          </div>
+          <div class="bc-meta">
+            <span class="bc-mi">📅 Travel: <strong>${b.tDate}</strong></span>
+            <span class="bc-mi">↩️ Return: <strong>${b.rDate}</strong></span>
+            <span class="bc-mi">👥 <strong>${b.pax}</strong> Passenger${b.pax>1?'s':''}</span>
+            <span class="bc-mi">🚌 <strong>${b.bus}</strong></span>
+          </div>
+          <div class="bc-foot">
+            <div class="bc-amount">${fmt(b.budget?.total||0)}</div>
+            <a href="destination.html?id=${b.destId}" class="btn btn-outline btn-sm">View Destination</a>
+          </div>
+        </div>
+      </div>`).join('');
+  }else{
+    document.getElementById('bookingsList').innerHTML=`
+      <div class="empty-dash">
+        <div class="ei">🗺️</div>
+        <h3 style="font-family:var(--font-display);font-size:1.6rem;color:var(--ink2);margin-bottom:8px">No trips yet</h3>
+        <p style="color:var(--muted);margin-bottom:24px">Your adventure starts with a single destination</p>
+        <a href="plan-trip.html" class="btn btn-amber" style="font-size:1rem">Plan My First Trip →</a>
+      </div>`;
+  }
+}
+
+function renderPlannedTrips(rows){
+  document.getElementById('plansTitle').innerHTML=`Planned Trips Database <span style="font-size:1rem;color:var(--muted);font-family:var(--font-mono);font-weight:400">(${rows.length})</span>`;
+  const mount=document.getElementById('plansTableMount');
+  if(rows.length){
+    mount.innerHTML=`
+      <div class="plans-table-wrap reveal">
+        <table class="plans-table">
+          <thead>
+            <tr>
+              <th>Trip ID</th>
+              <th>Traveler</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Location</th>
+              <th>Destination</th>
+              <th>Travel Date</th>
+              <th>Return Date</th>
+              <th>Passengers</th>
+              <th>Bus Type</th>
+              <th>Total Cost</th>
+              <th>Status</th>
+              <th>Booked On</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row=>`
+              <tr>
+                <td><strong>${row.id}</strong></td>
+                <td>${row.traveler_name || '-'}</td>
+                <td>${row.traveler_email || '-'}</td>
+                <td>${row.traveler_phone || '-'}</td>
+                <td>${row.traveler_location || '-'}</td>
+                <td><strong>${row.destination_name}</strong><br><span style="font-size:.78rem">${row.state}</span></td>
+                <td>${row.travel_date}</td>
+                <td>${row.return_date}</td>
+                <td>${row.passengers}</td>
+                <td>${row.bus_type}</td>
+                <td><strong>${fmt(row.total_cost || 0)}</strong></td>
+                <td>${row.status}</td>
+                <td>${row.booked_at}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }else{
+    mount.innerHTML=`
+      <div class="plans-table-empty">
+        No trip plans found in the SQL database yet.
+      </div>`;
+  }
+}
+
+async function initDashboard(){
+  try{
+    const [bks,plannedTrips]=await Promise.all([
+      apiGetBookings(user.id),
+      apiGetPlannedTrips()
+    ]);
+    renderBookings(bks);
+    renderPlannedTrips(plannedTrips);
+    document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+  }catch(err){
+    if((err.message||'').includes('User not found')){
+      handleInvalidSession('dashboard.html');
+      return;
+    }
+    document.getElementById('bookingsList').innerHTML=`
+      <div class="plans-table-empty">Unable to load dashboard data. Start the local Python server and try again.</div>`;
+    document.getElementById('plansTableMount').innerHTML=`
+      <div class="plans-table-empty">${err.message||'Unable to load trip records.'}</div>`;
+  }
+}
+initDashboard();
+
+const el=document.getElementById('navUser');
+el.innerHTML=`<div class="nav-user-chip"><div class="nav-avatar">${user.name[0].toUpperCase()}</div><span class="hide-sm">${user.name.split(' ')[0]}</span></div><a href="#" onclick="logout()" class="nav-logout">Logout</a>`;
+}
+</script>
+</body>
+</html>

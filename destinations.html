@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Destinations — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px; padding: 52px 5%;
+}
+.big-card {
+  background: var(--white); border-radius: 22px; overflow: hidden;
+  box-shadow: 0 4px 24px rgba(14,12,10,0.08);
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  transition: all 0.4s var(--ease);
+  border: 1px solid rgba(14,12,10,0.06);
+}
+.big-card:hover { transform: translateY(-10px); box-shadow: 0 28px 60px rgba(14,12,10,0.18); }
+.big-card-top {
+  height: 210px; position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; padding: 20px;
+}
+.big-card-top::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(14,12,10,0.72) 0%, rgba(14,12,10,0.05) 60%);
+}
+.big-card-bg {
+  position: absolute; inset: 0;
+  transition: transform 0.6s var(--ease);
+  display: flex; align-items: center; justify-content: center;
+}
+.big-card:hover .big-card-bg { transform: scale(1.08); }
+.big-card-emoji { position: absolute; top: 16px; left: 16px; z-index: 2; font-size: 2.5rem; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+.big-card-cat { position: absolute; top: 14px; right: 14px; z-index: 2; }
+.big-card-title { position: relative; z-index: 2; }
+.big-card-name { font-family: var(--font-display); font-size: 1.55rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+.big-card-state { color: rgba(255,255,255,0.62); font-size: 0.8rem; margin-top: 3px; }
+.big-card-body { padding: 20px; flex: 1; }
+.big-card-desc { color: var(--muted); font-size: 0.86rem; line-height: 1.65; margin-bottom: 14px; }
+.big-card-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.big-card-footer {
+  padding: 16px 20px; border-top: 1px solid var(--cream2);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--cream);
+}
+.bcf-stats { display: flex; gap: 20px; }
+.bcf-stat { font-size: 0.8rem; color: var(--muted); }
+.bcf-stat strong { color: var(--ink); font-weight: 700; display: block; font-size: 0.92rem; }
+.bcf-btn {
+  background: var(--ink2); color: var(--white);
+  padding: 8px 20px; border-radius: 9px;
+  font-size: 0.82rem; font-weight: 700;
+  font-family: var(--font-body); border: none; cursor: pointer;
+  transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+}
+.bcf-btn:hover { background: var(--amber); color: var(--ink); transform: scale(1.04); }
+.results-count {
+  padding: 16px 5% 0;
+  font-size: 0.85rem; color: var(--muted);
+  font-family: var(--font-mono);
+}
+.empty-state { text-align: center; padding: 90px 20px; grid-column: 1/-1; }
+.empty-state .es-icon { font-size: 4rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-line" id="scrollLine"></div>
+<nav class="navbar scrolled" id="navbar">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo-wrap">🚌</div>
+    <span class="nav-brand-name">Yatra</em> Yug</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link hide-sm">Home</a>
+    <a href="destinations.html" class="nav-link active hide-sm">Destinations</a>
+    <div id="navUser"></div>
+  </div>
+</nav>
+<main>
+<div class="page-hero">
+  <div class="eyebrow reveal" style="color:var(--amber);justify-content:center;margin-bottom:16px">🇮🇳 Incredible India</div>
+  <h1 class="display-l reveal d1" style="color:var(--white);margin-bottom:12px">
+    20 Extraordinary <em style="font-style:italic;color:var(--amber2)">Destinations</em>
+  </h1>
+  <p class="reveal d2" style="color:rgba(247,242,235,0.55);font-size:1rem;max-width:500px;margin:0 auto">
+    From snow-capped Himalayan peaks to sun-kissed tropical shores — find your perfect journey
+  </p>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-pill active" onclick="filter('')" id="fp-all">All</button>
+  <button class="filter-pill" onclick="filter('Mountains')" id="fp-Mountains">⛰️ Mountains</button>
+  <button class="filter-pill" onclick="filter('Beach')" id="fp-Beach">🏖️ Beach</button>
+  <button class="filter-pill" onclick="filter('Heritage')" id="fp-Heritage">🏛️ Heritage</button>
+  <button class="filter-pill" onclick="filter('Hills')" id="fp-Hills">🌿 Hills</button>
+  <button class="filter-pill" onclick="filter('Adventure')" id="fp-Adventure">🧗 Adventure</button>
+  <button class="filter-pill" onclick="filter('Wildlife')" id="fp-Wildlife">🐯 Wildlife</button>
+  <button class="filter-pill" onclick="filter('Nature')" id="fp-Nature">🌱 Nature</button>
+  <button class="filter-pill" onclick="filter('Spiritual')" id="fp-Spiritual">🪔 Spiritual</button>
+  <div class="filter-search">
+    <input type="text" id="sq" placeholder="🔍 Search…" oninput="doSearch(this.value)" />
+    <button onclick="doSearch(document.getElementById('sq').value)">Go</button>
+  </div>
+</div>
+
+<div id="resultsCount" class="results-count"></div>
+<div class="destinations-grid" id="destGrid"></div>
+</main>
+<footer><p><strong>Yatra Yug</strong> &nbsp;·&nbsp; &copy; 2024 All rights reserved. &nbsp;·&nbsp; <a href="index.html">Home</a></p></footer>
+
+<script src="data.js"></script>
+<script>
+/* cursor */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+  document.getElementById('scrollLine').style.transform=`scaleX(${pct})`;
+});
+
+renderNavUser('navUser');
+
+const params=new URLSearchParams(location.search);
+let curCat=params.get('cat')||'', curSearch=params.get('search')||'';
+if(curSearch) document.getElementById('sq').value=curSearch;
+if(curCat){ const el=document.getElementById('fp-'+curCat); if(el){el.classList.add('active');document.getElementById('fp-all').classList.remove('active');} }
+
+function filter(cat){
+  curCat=cat;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fp-'+(cat||'all')).classList.add('active');
+  render();
+}
+function doSearch(q){ curSearch=q; render(); }
+
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.08});
+
+function render(){
+  let list=[...DESTINATIONS];
+  if(curCat) list=list.filter(d=>d.cat===curCat);
+  if(curSearch) list=list.filter(d=>d.name.toLowerCase().includes(curSearch.toLowerCase())||d.state.toLowerCase().includes(curSearch.toLowerCase()));
+  document.getElementById('resultsCount').textContent=`Showing ${list.length} destination${list.length!==1?'s':''}`;
+  const grid=document.getElementById('destGrid');
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state"><div class="es-icon">🔍</div><h3 style="font-family:var(--font-display);font-size:1.5rem;color:var(--ink);margin-bottom:8px">No destinations found</h3><p style="color:var(--muted);margin-bottom:20px">Try a different search or filter</p><a href="destinations.html" class="btn btn-amber">Clear filters</a></div>`;
+    return;
+  }
+  grid.innerHTML=list.map(d=>`
+    <a href="destination.html?id=${d.id}" class="big-card reveal">
+      <div class="big-card-top">
+        <div class="big-card-bg" style="background:linear-gradient(135deg,${d.color},${d.color}88)">
+          <span style="font-size:5.5rem;opacity:0.3">${d.emoji}</span>
+        </div>
+        <span class="big-card-emoji">${d.emoji}</span>
+        <span class="big-card-cat badge badge-dark">${d.cat}</span>
+        <div class="big-card-title">
+          <div class="big-card-name">${d.name}</div>
+          <div class="big-card-state">📍 ${d.state}</div>
+        </div>
+      </div>
+      <div class="big-card-body">
+        <p class="big-card-desc">${d.desc}</p>
+        <div class="big-card-row">
+          <span class="badge badge-amber">★ ${d.rating}</span>
+          <span class="badge badge-stone">🌤️ ${d.season}</span>
+        </div>
+      </div>
+      <div class="big-card-footer">
+        <div class="bcf-stats">
+          <div class="bcf-stat"><strong>${d.km} km</strong>Distance</div>
+          <div class="bcf-stat"><strong>${fmt(d.km*2.5+3100)}</strong>Min. Budget</div>
+        </div>
+        <span class="bcf-btn">Explore →</span>
+      </div>
+    </a>`).join('');
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+}
+render();
+
+function renderNavUser(id){
+  const el=document.getElementById(id); if(!el) return;
+  const u=getSession();
+  if(u){
+    el.innerHTML=`<a href="plan-trip.html" class="nav-link hide-sm">Plan Trip</a><a href="dashboard.html" class="nav-link hide-sm">My Trips</a><div class="nav-user-chip"><div class="nav-avatar">${u.name[0].toUpperCase()}</div><span class="hide-sm">${u.name.split(' ')[0]}</span></div><a href="#" onclick="logout()" class="nav-logout">Logout</a>`;
+  }else{
+    el.innerHTML=`<a href="login.html" class="nav-link hide-sm">Login</a><a href="register.html" class="nav-cta">Get Started</a>`;
+  }
+}
+</script>
+</body>
+</html>

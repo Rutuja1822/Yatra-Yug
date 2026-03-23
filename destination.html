@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Destination — Yatra Yug</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.dest-hero {
+  height: 420px; position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; padding: 44px 5%;
+}
+.dest-hero-bg {
+  position: absolute; inset: 0; transition: transform 0.1s linear;
+  display: flex; align-items: center; justify-content: center;
+}
+.dest-hero-bg-emoji { font-size: 18rem; opacity: 0.07; filter: blur(2px); }
+.dest-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(14,12,10,0.85) 0%, rgba(14,12,10,0.3) 55%, rgba(14,12,10,0.15) 100%);
+}
+.dest-hero-content { position: relative; z-index: 2; max-width: 700px; }
+.breadcrumb { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.45); font-size: 0.8rem; margin-bottom: 14px; font-family: var(--font-mono); }
+.breadcrumb a { color: rgba(255,255,255,0.45); }
+.breadcrumb a:hover { color: var(--amber); }
+.breadcrumb span { color: rgba(255,255,255,0.25); }
+.dest-name { font-family: var(--font-display); font-size: clamp(2.5rem,5vw,3.8rem); font-weight: 700; color: var(--white); line-height: 1.05; margin-bottom: 10px; }
+.dest-state { color: rgba(255,255,255,0.65); font-size: 0.95rem; margin-bottom: 18px; }
+.dest-pills { display: flex; gap: 9px; flex-wrap: wrap; }
+.dest-pill { background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.22); color: var(--white); padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+.dest-pill.glow { background: rgba(200,134,26,0.25); border-color: rgba(200,134,26,0.4); color: var(--gold); }
+
+.dest-layout {
+  display: grid; grid-template-columns: 1fr 340px; gap: 32px;
+  padding: 48px 5%; max-width: 1280px; margin: 0 auto; align-items: start;
+}
+.stat-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--white); border-radius: 16px; padding: 18px;
+  text-align: center; box-shadow: 0 2px 12px rgba(14,12,10,0.07);
+  border: 1px solid var(--cream2); transition: all 0.25s var(--ease);
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(14,12,10,0.12); }
+.stat-card .sv { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--ink2); line-height: 1; }
+.stat-card .sl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; font-family: var(--font-mono); letter-spacing: 0.04em; }
+.info-block { background: var(--white); border-radius: 20px; padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(14,12,10,0.07); border: 1px solid var(--cream2); }
+.info-block h3 { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink2); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--cream2); display: flex; align-items: center; gap: 8px; }
+.place-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--cream2); }
+.place-item:last-child { border-bottom: none; }
+.place-icon-wrap { width: 44px; height: 44px; min-width: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.place-name { font-weight: 700; font-size: 0.93rem; color: var(--ink2); margin-bottom: 4px; }
+.place-desc { color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
+
+/* Sticky booking card */
+.book-widget {
+  background: var(--ink2); border-radius: 22px; padding: 28px;
+  position: sticky; top: 90px;
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 16px 48px rgba(14,12,10,0.25);
+}
+.book-widget h3 { font-family: var(--font-display); font-size: 1.3rem; color: var(--white); margin-bottom: 22px; }
+.budget-live {
+  background: rgba(200,134,26,0.1); border: 1px solid rgba(200,134,26,0.2);
+  border-radius: 14px; padding: 16px; margin: 16px 0;
+}
+.bl-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 0.85rem; color: rgba(247,242,235,0.6); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.bl-row:last-child { border-bottom: none; }
+.bl-row.total { color: var(--white); font-weight: 700; font-size: 0.95rem; }
+.bl-row.total .bl-val { color: var(--amber); font-size: 1.1rem; }
+.bl-val { font-weight: 600; color: rgba(247,242,235,0.85); }
+.book-cta {
+  width: 100%; padding: 14px; margin-top: 8px;
+  background: linear-gradient(135deg, var(--amber), var(--terra2));
+  color: var(--white); border: none; border-radius: 12px;
+  font-family: var(--font-body); font-size: 0.97rem; font-weight: 700;
+  cursor: pointer; transition: all 0.25s var(--ease);
+  box-shadow: 0 6px 20px rgba(200,134,26,0.35);
+}
+.book-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(200,134,26,0.45); }
+.payment-panel {
+  margin-top: 16px; padding: 16px; border-radius: 16px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+}
+.payment-panel h4 { margin: 0 0 8px; color: var(--white); font-size: 0.96rem; }
+.payment-note { color: rgba(247,242,235,0.62); font-size: 0.82rem; line-height: 1.55; margin-bottom: 14px; }
+.qr-card {
+  background: var(--white); border-radius: 16px; padding: 14px; margin-bottom: 14px;
+  text-align: center;
+}
+.qr-card img {
+  width: 100%; max-width: 220px; aspect-ratio: 1 / 1;
+  object-fit: contain; border-radius: 12px; display: block; margin: 0 auto 10px;
+}
+.qr-caption { color: var(--ink2); font-size: 0.78rem; line-height: 1.45; }
+.pay-status {
+  margin-top: 12px; padding: 10px 12px; border-radius: 12px;
+  background: rgba(200,134,26,0.12); border: 1px solid rgba(200,134,26,0.25);
+  color: var(--gold); font-size: 0.8rem; line-height: 1.5;
+}
+.qf-block { background: var(--white); border-radius: 20px; padding: 22px; margin-top: 22px; box-shadow: 0 2px 12px rgba(14,12,10,0.07); border: 1px solid var(--cream2); }
+.qf-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--cream2); font-size: 0.88rem; }
+.qf-row:last-child { border-bottom: none; }
+.qf-l { color: var(--muted); }.qf-v { font-weight: 700; color: var(--ink2); }
+@media(max-width:900px){.dest-layout{grid-template-columns:1fr}.book-widget{position:static}.stat-cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-line" id="scrollLine"></div>
+<nav class="navbar scrolled" id="navbar">
+  <a href="index.html" class="nav-brand"><div class="nav-logo-wrap">🚌</div><span class="nav-brand-name">Yatra</em> Yug</span></a>
+  <div class="nav-links">
+    <a href="destinations.html" class="nav-link hide-sm">Destinations</a>
+    <div id="navUser"></div>
+  </div>
+</nav>
+<main>
+<div class="dest-hero" id="destHero">
+  <div class="dest-hero-bg" id="destHeroBg"><span class="dest-hero-bg-emoji" id="bgEmoji"></span></div>
+  <div class="dest-hero-overlay"></div>
+  <div class="dest-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>›</span><a href="destinations.html">Destinations</a><span>›</span><span id="bcName">…</span></div>
+    <div class="dest-name" id="dName">Loading…</div>
+    <div class="dest-state" id="dState"></div>
+    <div class="dest-pills" id="dPills"></div>
+  </div>
+</div>
+<div class="dest-layout">
+  <div>
+    <div class="stat-cards" id="statCards"></div>
+    <div class="info-block reveal">
+      <h3>🌟 About <span id="aboutName"></span></h3>
+      <p id="aboutDesc" style="color:var(--muted);line-height:1.8;font-size:0.93rem;margin-bottom:16px"></p>
+      <div id="aboutTags" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div class="info-block reveal d1">
+      <h3>🗺️ Places to Visit</h3>
+      <div id="placesList"></div>
+    </div>
+  </div>
+  <div>
+    <div class="book-widget reveal">
+      <h3>Book Your Trip</h3>
+      <div id="bookForm"></div>
+    </div>
+    <div class="qf-block reveal d1">
+      <h3 style="font-family:var(--font-display);font-size:1.05rem;color:var(--ink2);margin-bottom:14px">📌 Quick Facts</h3>
+      <div id="qfList"></div>
+    </div>
+  </div>
+</div>
+</main>
+<footer><p><strong>Yatra Yug</strong> &nbsp;·&nbsp; &copy; 2024 &nbsp;·&nbsp; <a href="index.html">Home</a></p></footer>
+<script src="data.js"></script>
+<script>
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+  document.getElementById('scrollLine').style.transform=`scaleX(${pct})`;
+  document.getElementById('destHeroBg').style.transform=`translateY(${window.scrollY*0.3}px)`;
+});
+const ro=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+const params=new URLSearchParams(location.search);
+const id=parseInt(params.get('id'));
+const d=DESTINATIONS.find(x=>x.id===id);
+if(!d) window.location.href='destinations.html';
+
+document.title=d.name+' — Yatra Yug';
+document.getElementById('destHero').style.background=`linear-gradient(135deg,${d.color},${d.color}88)`;
+document.getElementById('bgEmoji').textContent=d.emoji;
+document.getElementById('bcName').textContent=d.name;
+document.getElementById('dName').textContent=d.name;
+document.getElementById('dState').innerHTML='📍 '+d.state;
+document.getElementById('dPills').innerHTML=`<span class="dest-pill glow">★ ${d.rating}</span><span class="dest-pill">🚌 ${d.km} km</span><span class="dest-pill">${d.cat}</span><span class="dest-pill">🌤️ ${d.season}</span>`;
+
+document.getElementById('statCards').innerHTML=[
+  [d.km+'','km from base'],
+  ['★'+d.rating,'Traveller Rating'],
+  [fmt(d.km*2.5+3100),'Min. Budget/person'],
+  [d.season,'Best Season']
+].map(([v,l])=>`<div class="stat-card"><div class="sv">${v}</div><div class="sl">${l}</div></div>`).join('');
+
+document.getElementById('aboutName').textContent=d.name;
+document.getElementById('aboutDesc').textContent=d.desc;
+document.getElementById('aboutTags').innerHTML=`<span class="badge badge-amber">${d.cat}</span><span class="badge badge-sage">Best: ${d.season}</span><span class="badge badge-stone">${d.km} km</span>`;
+
+const tIcons={Heritage:'🏛️',Adventure:'🧗',Nature:'🌿',Spiritual:'🙏',Beach:'🏖️',Wildlife:'🦁',Wonder:'✨',Culture:'🎭',Shopping:'🛍️',Landmark:'🏙️'};
+const tBg={Heritage:'#FFF3E8',Adventure:'#E8F4FD',Nature:'#E8F8F0',Spiritual:'#F5E8FF',Beach:'#E8F8FF',Wildlife:'#FFF5E8',Wonder:'#FFFDE8',Culture:'#FEE8F0',Shopping:'#F0E8FF',Landmark:'#E8EFFE'};
+const places=PLACES[d.id]||[];
+document.getElementById('placesList').innerHTML=places.map(p=>`
+  <div class="place-item">
+    <div class="place-icon-wrap" style="background:${tBg[p.type]||'#f5f5f5'}">${tIcons[p.type]||'📍'}</div>
+    <div>
+      <div class="place-name">${p.name} <span class="badge badge-stone" style="font-size:.7rem">${p.type}</span></div>
+      <div class="place-desc">${p.desc}</div>
+    </div>
+  </div>`).join('');
+
+document.getElementById('qfList').innerHTML=[
+  ['State',d.state],['Distance',d.km+' km'],['Type',d.cat],
+  ['Best Season',d.season],['Rating','★ '+d.rating],['Places to See',places.length]
+].map(([l,v])=>`<div class="qf-row"><span class="qf-l">${l}</span><span class="qf-v">${v}</span></div>`).join('');
+
+const user=getSession();
+if(user){
+  document.getElementById('bookForm').innerHTML=`
+    <div class="fg"><label style="color:rgba(247,242,235,.7)">Travel Date</label><input class="fc fc-dark" type="date" id="tDate" min="${today()}"/></div>
+    <div class="fg"><label style="color:rgba(247,242,235,.7)">Return Date</label><input class="fc fc-dark" type="date" id="rDate" min="${today()}"/></div>
+    <div class="fg"><label style="color:rgba(247,242,235,.7)">Passengers</label>
+      <select class="fc fc-dark" id="pax" onchange="upd()">
+        ${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}">${n} Passenger${n>1?'s':''}</option>`).join('')}
+      </select>
+    </div>
+    <div class="fg"><label style="color:rgba(247,242,235,.7)">Bus Type</label>
+      <select class="fc fc-dark" id="busT" onchange="upd()">
+        <option value="Standard">Standard — ₹2.50/km</option>
+        <option value="Sleeper">Sleeper — ₹3.50/km</option>
+        <option value="Luxury">Luxury — ₹4.00/km</option>
+        <option value="Volvo AC">Volvo AC — ₹5.00/km</option>
+      </select>
+    </div>
+        <div class="payment-panel">
+      <h4>Payment Verification</h4>
+      <div class="payment-note">Scan the QR code, complete the payment, then enter the payment account name and UTR number so the admin can verify it.</div>
+      <div class="qr-card">
+        <img src="payment-qr-placeholder.svg" alt="Payment scanner QR code"/>
+        <div class="qr-caption">Replace <strong>payment-qr-placeholder.svg</strong> with your exact QR scanner image file when you add it to the project.</div>
+      </div>
+      <div class="fg"><label style="color:rgba(247,242,235,.7)">Transaction Account Name</label><input class="fc fc-dark" type="text" id="payerName" placeholder="Name used in the payment app"/></div>
+      <div class="fg"><label style="color:rgba(247,242,235,.7)">Payment Email</label><input class="fc fc-dark" type="email" id="paymentEmail" value="${user.email||''}" placeholder="Receipt email"/></div>
+      <div class="fg"><label style="color:rgba(247,242,235,.7)">Contact Number</label><input class="fc fc-dark" type="tel" id="paymentContact" value="${user.phone||''}" placeholder="Payment contact number"/></div>
+      <div class="fg"><label style="color:rgba(247,242,235,.7)">UTR Number</label><input class="fc fc-dark" type="text" id="utrNo" placeholder="Enter UTR after payment" maxlength="30" style="text-transform:uppercase"/></div>
+      <button class="book-cta" onclick="doBook()">Confirm Booking</button>
+    </div>
+    <div class="budget-live" id="budgetLive">
+      <div class="bl-row"><span>🚌 Bus Fare</span><span class="bl-val" id="b1">–</span></div>
+      <div class="bl-row"><span>🏨 Accommodation</span><span class="bl-val" id="b2">–</span></div>
+      <div class="bl-row"><span>🍽️ Food</span><span class="bl-val" id="b3">–</span></div>
+      <div class="bl-row"><span>🎯 Sightseeing</span><span class="bl-val" id="b4">–</span></div>
+      <div class="bl-row total"><span>Total Estimate</span><span class="bl-val" id="b5">–</span></div>
+    </div>
+    <button class="book-cta" onclick="doBook()">Confirm Booking →</button>`;
+  upd();
+  document.getElementById('tDate').addEventListener('change',function(){document.getElementById('rDate').min=this.value;});
+}else{
+  document.getElementById('bookForm').innerHTML=`
+    <p style="color:rgba(247,242,235,.6);margin-bottom:20px;font-size:.9rem">Sign in to book this destination and get a personalised budget estimate.</p>
+    <a href="login.html?next=destination.html?id=${d.id}" class="book-cta" style="display:block;text-align:center;text-decoration:none">Login to Book →</a>
+    <p style="text-align:center;color:rgba(247,242,235,.4);font-size:.82rem;margin-top:12px">New? <a href="register.html" style="color:var(--amber)">Create free account</a></p>`;
+}
+function upd(){
+  const pax=parseInt(document.getElementById('pax').value)||1;
+  const bus=document.getElementById('busT').value;
+  const b=calcBudget(d.km,pax,bus);
+  document.getElementById('b1').textContent=fmt(b.fuel);
+  document.getElementById('b2').textContent=fmt(b.accom);
+  document.getElementById('b3').textContent=fmt(b.food);
+  document.getElementById('b4').textContent=fmt(b.sight);
+  document.getElementById('b5').textContent=fmt(b.total);
+}
+async function doBook(){
+  const td=document.getElementById('tDate').value;
+  const rd=document.getElementById('rDate').value;
+  if(!td||!rd){alert('Please select travel and return dates.');return;}
+  if(rd<td){alert('Return date must be after travel date.');return;}
+  const pax=parseInt(document.getElementById('pax').value);
+  const bus=document.getElementById('busT').value;
+  const payerName=(document.getElementById('payerName').value||'').trim();
+  const paymentEmail=(document.getElementById('paymentEmail').value||'').trim();
+  const paymentContact=(document.getElementById('paymentContact').value||'').trim();
+  const utr=(document.getElementById('utrNo').value||'').trim().toUpperCase();
+  if(!payerName){alert('Enter the transaction account name used for payment.');return;}
+  if(!paymentEmail){alert('Enter the payment email address.');return;}
+  if(!paymentContact){alert('Enter the payment contact number.');return;}
+  if(utr.length<6){alert('Enter a valid UTR number after completing the payment.');return;}
+  const b=calcBudget(d.km,pax,bus);
+  const user=getSession();
+  if(!user||!user.id){handleInvalidSession(`destination.html?id=${d.id}`);return;}
+  try{
+    const result=await apiCreateBooking({
+      user_id:user.id,
+      destination_id:d.id,
+      destination_name:d.name,
+      state:d.state,
+      emoji:d.emoji,
+      color:d.color,
+      season:d.season,
+      km:d.km,
+      travel_date:td,
+      return_date:rd,
+      passengers:pax,
+      bus_type:bus,
+      budget:b,
+      status:'Confirmed',
+      booked_at:new Date().toLocaleDateString('en-IN'),
+      session_user:{
+        id:user.id,
+        name:user.name,
+        email:user.email,
+        phone:user.phone,
+        location:user.location
+      },
+      payment:{
+        transaction_account_name:payerName,
+        email:paymentEmail,
+        contact:paymentContact,
+        utr:utr,
+        payment_date:new Date().toLocaleString('en-IN')
+      }
+    });
+    const bookingId=result.booking_id;
+    const effectiveUserId=result.user_id||user.id;
+    window.location.href=`booking-confirm.html?bk=${bookingId}&uid=${effectiveUserId}`;
+  }catch(err){
+    if((err.message||'').includes('User not found')){
+      handleInvalidSession(`destination.html?id=${d.id}`);
+      return;
+    }
+    alert(err.message||'Unable to save booking right now.');
+  }
+}
+function renderNavUser(id){
+  const el=document.getElementById(id);if(!el)return;
+  const u=getSession();
+  if(u){el.innerHTML=`<a href="plan-trip.html" class="nav-link hide-sm">Plan Trip</a><a href="dashboard.html" class="nav-link hide-sm">My Trips</a><div class="nav-user-chip"><div class="nav-avatar">${u.name[0].toUpperCase()}</div></div><a href="#" onclick="logout()" class="nav-logout">Logout</a>`;}
+  else{el.innerHTML=`<a href="login.html" class="nav-link hide-sm">Login</a><a href="register.html" class="nav-cta">Get Started</a>`;}
+}
+renderNavUser('navUser');
+</script>
+</body>
+</html>
+
+
+
